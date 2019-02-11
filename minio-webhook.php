@@ -7,7 +7,7 @@ Author: Frank Mueller <set@cooki.me>
 Author URI: https://github.com/setcooki/
 Issues: https://github.com/setcooki/minio-webhook/issues
 Text Domain: minio-webhook
-Version: 0.0.1
+Version: 0.0.2
 */
 if(!defined('MINIO_WEBHOOK_DOMAIN'))
 {

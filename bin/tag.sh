@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 V="$1"
 M="$2"
 
@@ -11,7 +13,7 @@ fi;
 
 git tag -a v$V -m "Version $V $M"
 git push --tags
-sh ./version.sh
+sh $DIR/version.sh
 composer update
 grunt dist
 sleep 5
