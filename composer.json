@@ -1,0 +1,28 @@
+{
+  "name": "setcooki/minio-webhook",
+  "description": "A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress instance media via Minio webhooks",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Frank Mueller",
+      "email": "set@cooki.me",
+      "homepage": "http://set.cooki.me",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+      "issues": "https://github.com/setcooki/minio-webhook/issues"
+  },
+  "type": "wordpress-plugin",
+  "config": {
+    "vendor-dir": "lib/vendor"
+  },
+  "require": {
+    "php": ">=7.1.2"
+  },
+  "autoload":{
+    "psr-4": {
+      "Setcooki\\Minio\\Webhook\\": "src"
+    }
+  }
+}
