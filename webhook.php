@@ -7,15 +7,15 @@ try
 {
     if(strtolower($_SERVER['REQUEST_METHOD']) !== 'post')
     {
-        throw new \Exception(__('Post method must be post', 'minio-webhook'));
+        throw new \Exception('Post method must be post');
     }
     if(!isset($_REQUEST['token']) || (isset($_REQUEST['token']) && empty($_REQUEST['token'])))
     {
-        throw new \Exception(__('Empty or non-existing token', 'minio-webhook'));
+        throw new \Exception('Empty or non-existing token');
     }
     if((string)$_REQUEST['token'] !== (string)get_option('minio-webhook-token'))
     {
-        throw new \Exception(__('Token miss match', 'minio-webhook'));
+        throw new \Exception('Token miss match');
     }
     if(!empty($data))
     {
@@ -25,10 +25,11 @@ try
     {
         (new \Setcooki\Minio\Webhook\Webhook())->execute($data);
     }else{
-        throw new \Exception(sprintf(__('Json decode error: %s', 'minio-webhook'), json_last_error_msg()));
+        throw new \Exception(sprintf('Json decode error: %s', json_last_error_msg()));
     }
 }
 catch(\Exception $e)
 {
+    echo $e->getMessage();
     error_log($e->getMessage());
 }

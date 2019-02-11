@@ -18,7 +18,8 @@ module.exports = function (grunt) {
                         'locale/**',
                         'templates/**',
                         '<%= name %>.php',
-                        'README.md'
+                        'README.md',
+                        'webhook.php'
                     ], dest: '<%= name %>/'
                 }]
             }
