@@ -1,36 +1,34 @@
 <?php
 /*
-Plugin Name: Minio Webhook (Media Cloud Extension)
-Plugin URI: https://github.com/setcooki/minio-webhook
+Plugin Name: WP Minio Sync (Media Cloud Extension)
+Plugin URI: https://github.com/setcooki/wp-minio-sync
 Description: A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress instance media via Minio webhooks
 Author: Frank Mueller <set@cooki.me>
 Author URI: https://github.com/setcooki/
-Issues: https://github.com/setcooki/minio-webhook/issues
-Text Domain: minio-webhook
-Version: 0.0.2
+Issues: https://github.com/setcooki/wp-minio-sync/issues
+Text Domain: wp-minio-sync
+Version: 0.0.3
 */
-if(!defined('MINIO_WEBHOOK_DOMAIN'))
+if(!defined('MINIO_SYNC_DOMAIN'))
 {
-    define('MINIO_WEBHOOK_DOMAIN', 'minio-webhook');
+    define('MINIO_SYNC_DOMAIN', 'wp-minio-sync');
 }
-define('MINIO_WEBHOOK_DIR', dirname(__FILE__));
-define('MINIO_WEBHOOK_NAME', basename(__FILE__, '.php'));
-define('MINIO_WEBHOOK_FILE', __FILE__);
-define('MINIO_WEBHOOK_URL', plugin_dir_url(MINIO_WEBHOOK_FILE));
+define('MINIO_SYNC_DIR', dirname(__FILE__));
+define('MINIO_SYNC_NAME', basename(__FILE__, '.php'));
+define('MINIO_SYNC_FILE', __FILE__);
+define('MINIO_SYNC_URL', plugin_dir_url(MINIO_SYNC_FILE));
 
-if(!function_exists('minio_webhook'))
+if(!function_exists('minio_sync'))
 {
-    function minio_webhook()
+    function minio_sync()
     {
         try
         {
             require dirname(__FILE__) . '/lib/vendor/autoload.php';
-
             $plugin = new \Setcooki\Minio\Webhook\Plugin();
             register_activation_hook(__FILE__, array($plugin, 'activate'));
             register_deactivation_hook(__FILE__, array($plugin, 'deactivate'));
             register_uninstall_hook(__FILE__, array(get_class($plugin), 'uninstall'));
-
             add_action('init', function() use ($plugin)
             {
                 $plugin->init();
@@ -42,4 +40,4 @@ if(!function_exists('minio_webhook'))
         }
     }
 }
-minio_webhook();
+minio_sync();

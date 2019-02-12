@@ -46,9 +46,9 @@ class Plugin
         {
             add_option('minio-webhook-token', bin2hex(random_bytes(16)));
         }
-        add_action('plugin_action_links_' . plugin_basename(MINIO_WEBHOOK_FILE), function($links)
+        add_action('plugin_action_links_' . plugin_basename(MINIO_SYNC_FILE), function($links)
         {
-            $url = sprintf('%swebhook.php?token=%s', MINIO_WEBHOOK_URL, get_option('minio-webhook-token'));
+            $url = sprintf('%swebhook.php?token=%s', MINIO_SYNC_URL, get_option('minio-webhook-token'));
             $links = array_merge($links, ['<span style="color:black">Token:</span> <a href="'.$url.'" target="_blank">'.get_option('minio-webhook-token').'</a>']);
             return $links;
         });

@@ -42,7 +42,7 @@ class Webhook
     {
         if(!get_option('ilab-media-s3-bucket'))
         {
-            throw new \Exception(__('Minio bucket option \'ilab-media-s3-bucket\' not found (assuming storage has not been set up yet)', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Minio bucket option \'ilab-media-s3-bucket\' not found (assuming storage has not been set up yet)', MINIO_SYNC_DOMAIN));
         }else{
             $this->bucket = get_option('ilab-media-s3-bucket');
         }
@@ -58,23 +58,23 @@ class Webhook
     {
         if(!isset($data->EventName) || (isset($data->EventName) && empty($data->EventName)))
         {
-            throw new \Exception(__('Webhook payload is missing \'EventName\' key', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Webhook payload is missing \'EventName\' key', MINIO_SYNC_DOMAIN));
         }
         if(!isset($data->Key) || (isset($data->Key) && empty($data->Key)))
         {
-            throw new \Exception(__('Webhook payload is missing \'Key\' key', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Webhook payload is missing \'Key\' key', MINIO_SYNC_DOMAIN));
         }
         if(!isset($data->Records) || (isset($data->Records) && empty($data->Records)))
         {
-            throw new \Exception(__('Webhook payload is missing \'Records\' key', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Webhook payload is missing \'Records\' key', MINIO_SYNC_DOMAIN));
         }
         if(!is_array($data->Records) || (is_array($data->Records) && !array_key_exists(0, $data->Records)))
         {
-            throw new \Exception(__('Webhook payload has no \'Records\' items', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Webhook payload has no \'Records\' items', MINIO_SYNC_DOMAIN));
         }
         if(empty($data->Records[0]) || (!empty($data->Records[0]) && !is_object($data->Records[0])))
         {
-            throw new \Exception(__('Webhook payload has no valid \'Records\' items', MINIO_WEBHOOK_DOMAIN));
+            throw new \Exception(__('Webhook payload has no valid \'Records\' items', MINIO_SYNC_DOMAIN));
         }
         if(preg_match('=\:(put|delete)$=i', $data->EventName, $m))
         {
@@ -130,7 +130,7 @@ class Webhook
             }
             return $this->{$this->type}($data);
         }else{
-             throw new \Exception(sprintf(__('Webhook type: %s is not implemented', MINIO_WEBHOOK_DOMAIN), $this->type));
+             throw new \Exception(sprintf(__('Webhook type: %s is not implemented', MINIO_SYNC_DOMAIN), $this->type));
         }
     }
 
@@ -207,10 +207,10 @@ class Webhook
                             }
                             return true;
                         }else{
-                            throw new \Exception(sprintf(__('Unable to insert attachment: %s', MINIO_WEBHOOK_DOMAIN), $attach_id->get_error_message()));
+                            throw new \Exception(sprintf(__('Unable to insert attachment: %s', MINIO_SYNC_DOMAIN), $attach_id->get_error_message()));
                         }
                     }else{
-                        throw new \Exception(sprintf(__('Unable to read image meta data', MINIO_WEBHOOK_DOMAIN)));
+                        throw new \Exception(sprintf(__('Unable to read image meta data', MINIO_SYNC_DOMAIN)));
                     }
                 }
                 catch(\Exception $e)
@@ -219,10 +219,10 @@ class Webhook
                     throw $e;
                 }
             }else{
-                throw new \Exception(sprintf(__('Unable to create temporary upload file: %s', MINIO_WEBHOOK_DOMAIN), $tmp));
+                throw new \Exception(sprintf(__('Unable to create temporary upload file: %s', MINIO_SYNC_DOMAIN), $tmp));
             }
         }else{
-            throw new \Exception(sprintf(__('Key: %s not found in storage', MINIO_WEBHOOK_DOMAIN), $key));
+            throw new \Exception(sprintf(__('Key: %s not found in storage', MINIO_SYNC_DOMAIN), $key));
         }
     }
 

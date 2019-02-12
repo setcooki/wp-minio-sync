@@ -1,7 +1,7 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
-        name: 'minio-webhook',
+        name: 'wp-minio-sync',
         compress: {
             dist: {
                 options: {
