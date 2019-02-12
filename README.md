@@ -1,21 +1,21 @@
-# Minio Webhook (Media Cloud Extension
+# WP Minio Sync (Media Cloud Extension)
 
-_A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress instance media via Minio webhooks_
+_A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress instances media via Minio webhooks_
 
 **What does this plugin do?**
 
 You are using Minio S3 cloud storage for Wordpress (together with https://wordpress.org/plugins/ilab-media-tools/) ... tbd
- 
+
 
 ## 1. Usage
 
 Download plugin .zip from `/dist` folder and install with wordpress
 
-## 3. Minio setup
+## 2. Minio setup
 
+...tbd
 
-## 2. Development
-
+## 3. Development
 
 1. clone repo
 2. do a `npm install` for dependencies

@@ -54,6 +54,15 @@ class Minio
     /**
      * @return bool
      */
+    public static function hasInstance()
+    {
+        return (static::$instance !== null) ? true : false;
+    }
+
+
+    /**
+     * @return bool
+     */
     public static function isInstalled()
     {
         return (class_exists('\ILAB\MediaCloud\Cloud\Storage\Driver\S3\MinioStorage'));

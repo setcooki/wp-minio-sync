@@ -11,12 +11,6 @@ class Plugin
     /**
      * @var null
      */
-    public static $logger = null;
-
-
-    /**
-     * @var null
-     */
     public static $options = [];
 
 

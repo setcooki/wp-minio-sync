@@ -76,7 +76,7 @@ class Webhook
         {
             throw new \Exception(__('Webhook payload has no valid \'Records\' items', MINIO_WEBHOOK_DOMAIN));
         }
-        if(preg_match('=\:(put)$=i', $data->EventName, $m))
+        if(preg_match('=\:(put|delete)$=i', $data->EventName, $m))
         {
             $this->data     = $data;
             $this->item     = ($data->Records[0]);
@@ -140,16 +140,40 @@ class Webhook
      * @return bool
      * @throws \Exception
      */
+    protected function delete($data)
+    {
+        $key    = $this->pathFromKey($this->key);
+        $udir   = wp_upload_dir();
+        $guid   = $udir['baseurl'] . $key;
+        if(($id = $this->getAttachment($guid)) !== false)
+        {
+            if(($post = @wp_delete_attachment($id, true)) instanceof \Wp_Post)
+            {
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * @param $data
+     * @return bool
+     * @throws \Exception
+     */
     protected function put($data)
     {
         $key = $this->pathFromKey($this->key);
         if(Minio::instance()->has($key))
         {
-            $guid   = wp_upload_dir()['baseurl'] . $key;
+            $udir   = wp_upload_dir();
+            $guid   = $udir['baseurl'] . $key;
             $file   = basename($key);
             $name   = pathinfo($file, PATHINFO_FILENAME);
             $link   = Minio::instance()->get($key);
-            $tmp    = realpath(dirname(__FILE__) . '/../../uploads' . $key);
+            $tmp    = $udir['basedir'] . $key;
             if(file_put_contents($tmp, fopen($link, 'r')))
             {
                 try
@@ -168,17 +192,20 @@ class Webhook
                             'post_type'         => 'attachment',
                             'post_excerpt'      => $excerpt
                         ];
+                        if(($id = $this->getAttachment($guid)) !== false)
+                        {
+                            $args['ID'] = $id;
+                        }
                         $attach_id = wp_insert_attachment($args, $key);
                         if(!($attach_id instanceof \WP_Error))
                         {
                             $attach_data = wp_generate_attachment_metadata($attach_id, $tmp);
-                            if(wp_update_attachment_metadata($attach_id, $attach_data))
+                            wp_update_attachment_metadata($attach_id, $attach_data);
+                            if(is_file($tmp))
                             {
                                 unlink($tmp);
-                                return true;
-                            }else{
-                                throw new \Exception(sprintf(__('Unable to update attachment meta data', MINIO_WEBHOOK_DOMAIN)));
                             }
+                            return true;
                         }else{
                             throw new \Exception(sprintf(__('Unable to insert attachment: %s', MINIO_WEBHOOK_DOMAIN), $attach_id->get_error_message()));
                         }
@@ -198,6 +225,30 @@ class Webhook
             throw new \Exception(sprintf(__('Key: %s not found in storage', MINIO_WEBHOOK_DOMAIN), $key));
         }
     }
+
+
+    /**
+     * @param $guid
+     * @return bool
+     */
+    protected function getAttachment($guid)
+    {
+        global $wpdb;
+
+        if(preg_match('=^http(s)\:\/\/=i', $guid))
+        {
+            $guid = parse_url($guid, PHP_URL_PATH);
+        }else{
+            $guid = trim($guid);
+        }
+        $results = $wpdb->get_row(sprintf("SELECT * FROM `{$wpdb->prefix}posts` WHERE `post_type` = 'attachment' AND `guid` LIKE '%%%s'", $guid));
+        if(!empty($results))
+        {
+            return $results->ID;
+        }
+        return false;
+    }
+
 
 
     /**
