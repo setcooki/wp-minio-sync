@@ -4,18 +4,52 @@ _A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress i
 
 **What does this plugin do?**
 
-You are using Minio S3 cloud storage for Wordpress (together with https://wordpress.org/plugins/ilab-media-tools/) ... tbd
+You are using or planning to use Minio S3 cloud storage (https://www.minio.io/) together ILAB´s Wordpress media cloud plugin https://wordpress.org/plugins/ilab-media-tools/)
+and want to share your media across multiple Wordpress projects with independent databases? You need this plugin then because even though you can connected any Wordpress
+instance to your Minio cloud Wordpress will not know about the Media since it needs post and post meta data together with your media file in order to work with it. 
+
+Since the Media cloud plugin does is not able to notify other wordpress installs over any changes to your media library we can use Minio´s webhook capabilities to notify any
+Minio connected Wordpress instance of changes to your media library. Once a put or delete webhook is fired the needed post and post meta will be created or updated.
+
+Finally you can a real cloud media library across independent wordpress installs.
 
 
 ## 1. Usage
 
-Download plugin .zip from `/dist` folder and install with wordpress
+Download plugin .zip from `/dist` folder and install with Wordpress
 
-## 2. Minio setup
 
-...tbd
+## 2. Minio
 
-## 3. Development
+In order to create your Minio webhooks please refer to https://docs.minio.io/docs/minio-bucket-notification-guide.html
+
+You can enable webhooks by changing your Minio server´s config by:
+
+```
+$ mc admin config get myminio/ > /tmp/myconfig
+```
+
+Enable the webhook and add your endpoints then:
+
+```
+$ mc admin config set myminio < /tmp/myconfig
+```
+
+After you have added your webhook add the events to your buckets:
+
+```
+$ mc event add <host>/<bucket> arn:minio:sqs::1:webhook --event put --debug
+$ mc event add <host>/<bucket> arn:minio:sqs::1:webhook --event delete --debug
+```
+
+Restart the server:
+
+```
+$ mc admin service restart <host>
+```
+
+
+## 3. Development (only)
 
 1. clone repo
 2. do a `npm install` for dependencies

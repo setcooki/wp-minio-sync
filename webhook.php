@@ -22,16 +22,18 @@ define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 define('SHORTINIT', false);
 
-require_once ABSPATH . 'wp-load.php';
-
+error_reporting(E_ALL);
 ini_set( 'error_log', ABSPATH . 'wp-content' . DIRECTORY_SEPARATOR . 'debug.log');
-$data = file_get_contents("php://input");
+
+require_once ABSPATH . 'wp-load.php';
 
 try
 {
+    $data = file_get_contents("php://input");
+    $debug = (isset($_REQUEST['debug']) && (bool)$_REQUEST['debug']) ? true : false;
     if(strtolower($_SERVER['REQUEST_METHOD']) !== 'post')
     {
-        throw new \Exception('Request method must be post');
+        throw new \Exception('Request method not allowed');
     }
     if(!isset($_REQUEST['token']) || (isset($_REQUEST['token']) && empty($_REQUEST['token'])))
     {
@@ -47,13 +49,18 @@ try
     }
     if(($data = json_decode($data)) !== null && json_last_error() === JSON_ERROR_NONE)
     {
-        echo (bool)(new \Setcooki\Minio\Webhook\Webhook())->execute($data);
+        echo (bool)(new \Setcooki\Minio\Webhook\Webhook(['debug' => $debug]))->execute($data);
     }else{
         throw new \Exception(sprintf('Json decode error: %s', json_last_error_msg()));
     }
 }
 catch(\Exception $e)
 {
-    echo 0;
+    if($debug)
+    {
+        die($e->getMessage());
+    }else{
+        echo 0;
+    }
     error_log($e->getMessage());
 }

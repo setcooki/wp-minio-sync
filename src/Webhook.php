@@ -8,6 +8,8 @@ namespace Setcooki\Minio\Webhook;
  */
 class Webhook
 {
+    protected $options = [];
+
     /**
      * @var array|mixed|object|null
      */
@@ -36,10 +38,16 @@ class Webhook
 
     /**
      * Webhook constructor.
+     * @param null $options
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct($options = null)
     {
+        if($options !== null)
+        {
+            $this->options = array_merge((array)$options, (array)$options);
+        }
+
         if(!get_option('ilab-media-s3-bucket'))
         {
             throw new \Exception(__('Minio bucket option \'ilab-media-s3-bucket\' not found (assuming storage has not been set up yet)', MINIO_SYNC_DOMAIN));
@@ -126,9 +134,10 @@ class Webhook
         {
             if($this->bailIp())
             {
-                return false;
+                throw new \Exception(_('Remote IP is not allowed to use webhook', MINIO_SYNC_DOMAIN));
+            }else{
+                return $this->{$this->type}($data);
             }
-            return $this->{$this->type}($data);
         }else{
              throw new \Exception(sprintf(__('Webhook type: %s is not implemented', MINIO_SYNC_DOMAIN), $this->type));
         }
@@ -136,17 +145,16 @@ class Webhook
 
 
     /**
-     * @param $data
      * @return bool
-     * @throws \Exception
      */
-    protected function delete($data)
+    protected function delete()
     {
         $key    = $this->pathFromKey($this->key);
         $udir   = wp_upload_dir();
         $guid   = $udir['baseurl'] . $key;
         if(($id = $this->getAttachment($guid)) !== false)
         {
+            //TODO: when there is no file in /uploads wp_delete_attachment() throws a bunch or warnings
             if(($post = @wp_delete_attachment($id, true)) instanceof \Wp_Post)
             {
                 return true;
@@ -159,11 +167,9 @@ class Webhook
 
 
     /**
-     * @param $data
-     * @return bool
      * @throws \Exception
      */
-    protected function put($data)
+    protected function put()
     {
         $key = $this->pathFromKey($this->key);
         if(Minio::instance()->has($key))
@@ -201,10 +207,7 @@ class Webhook
                         {
                             $attach_data = wp_generate_attachment_metadata($attach_id, $tmp);
                             wp_update_attachment_metadata($attach_id, $attach_data);
-                            if(is_file($tmp))
-                            {
-                                unlink($tmp);
-                            }
+                            if(is_file($tmp)){ unlink($tmp); }
                             return true;
                         }else{
                             throw new \Exception(sprintf(__('Unable to insert attachment: %s', MINIO_SYNC_DOMAIN), $attach_id->get_error_message()));
@@ -215,7 +218,7 @@ class Webhook
                 }
                 catch(\Exception $e)
                 {
-                    unlink($tmp);
+                    if(is_file($tmp)){ unlink($tmp); }
                     throw $e;
                 }
             }else{
@@ -302,9 +305,7 @@ class Webhook
 
 
     /**
-     * get the server ip from request. returns null if not possible
-     *
-     * @return mixed|null|string
+     * @return string|null
      */
     public static function getServerIp()
     {
