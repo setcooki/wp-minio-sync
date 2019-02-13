@@ -1,6 +1,6 @@
 <?php
 
-namespace Setcooki\Minio\Webhook;
+namespace Setcooki\Wp\Minio\Sync;
 
 /**
  * Class Plugin

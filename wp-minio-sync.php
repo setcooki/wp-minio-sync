@@ -25,7 +25,7 @@ if(!function_exists('minio_sync'))
         try
         {
             require dirname(__FILE__) . '/lib/vendor/autoload.php';
-            $plugin = new \Setcooki\Minio\Webhook\Plugin();
+            $plugin = new \Setcooki\Wp\Minio\Sync\Plugin();
             register_activation_hook(__FILE__, array($plugin, 'activate'));
             register_deactivation_hook(__FILE__, array($plugin, 'deactivate'));
             register_uninstall_hook(__FILE__, array(get_class($plugin), 'uninstall'));

@@ -16,7 +16,10 @@ Finally you can a real cloud media library across independent wordpress installs
 
 ## 1. Usage
 
-Download plugin .zip from `/dist` folder and install with Wordpress
+1) Download plugin .zip from `/dist` folder and install with Wordpress
+
+2) Once installed go to the plugin overview page (`/wp-admin/plugins.php`) and under the plugin details you find a link to the Minio webhook target including 
+the access token. This url must be defined as endpoint in your Minio´s webhook server configuration.
 
 
 ## 2. Minio
