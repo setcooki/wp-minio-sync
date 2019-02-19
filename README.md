@@ -4,14 +4,14 @@ _A Wordpress (ilab media tools) extension to synchronise cloud based Wordpress i
 
 **What does this plugin do?**
 
-You are using or planning to use Minio S3 cloud storage (https://www.minio.io/) together ILAB´s Wordpress media cloud plugin https://wordpress.org/plugins/ilab-media-tools/)
-and want to share your media across multiple Wordpress projects with independent databases? You need this plugin then because even though you can connected any Wordpress
-instance to your Minio cloud Wordpress will not know about the Media since it needs post and post meta data together with your media file in order to work with it. 
+You are using or planning to use Minio S3 cloud storage (https://www.minio.io/) together with ILAB´s Wordpress media cloud plugin https://wordpress.org/plugins/ilab-media-tools/)
+and want to share your media across multiple Wordpress projects with independent databases? You need this plugin then - because even though you can connected any Wordpress
+instance to your Minio cloud - Wordpress will not know about the media since it needs post and post meta data together with your media file in order to work with it. 
 
-Since the Media cloud plugin does is not able to notify other wordpress installs over any changes to your media library we can use Minio´s webhook capabilities to notify any
-Minio connected Wordpress instance of changes to your media library. Once a put or delete webhook is fired the needed post and post meta will be created or updated.
+Since the Media cloud plugin is not able to notify other wordpress installs of any changes to your media library we can use Minio´s webhook capabilities to notify any
+Minio connected Wordpress instance of changes to your media library. Once a put or delete webhook is fired the needed post and post meta will be created or updated accordingly.
 
-Finally you can a real cloud media library across independent wordpress installs.
+Finally you can have a real cloud media library across theoretically dozens of independent wordpress installs.
 
 
 ## 1. Usage
