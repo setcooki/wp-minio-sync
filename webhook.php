@@ -49,7 +49,7 @@ try
     }
     if(($data = json_decode($data)) !== null && json_last_error() === JSON_ERROR_NONE)
     {
-        echo (int)(new \Setcooki\Minio\Webhook\Webhook(['debug' => $debug]))->execute($data);
+        echo (int)(new \Setcooki\Wp\Minio\Sync\Webhook(['debug' => $debug]))->execute($data);
     }else{
         throw new \Exception(sprintf('Json decode error: %s', json_last_error_msg()));
     }
