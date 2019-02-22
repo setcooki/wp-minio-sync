@@ -180,6 +180,12 @@ class Webhook
             $name   = pathinfo($file, PATHINFO_FILENAME);
             $link   = Minio::instance()->get($key);
             $tmp    = $udir['basedir'] . $key;
+            $path   = dirname($tmp);
+
+            if(!is_dir($path))
+            {
+                mkdir($path, 0755, true);
+            }
             if(file_put_contents($tmp, fopen($link, 'r')))
             {
                 try
