@@ -7,7 +7,7 @@ Author: Frank Mueller <set@cooki.me>
 Author URI: https://github.com/setcooki/
 Issues: https://github.com/setcooki/wp-minio-sync/issues
 Text Domain: wp-minio-sync
-Version: 0.0.6
+Version: 0.0.7
 */
 if(!defined('MINIO_SYNC_DOMAIN'))
 {
