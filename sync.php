@@ -33,11 +33,15 @@ require_once ABSPATH . 'wp-load.php';
 
 try
 {
-    $data = file_get_contents("php://input");
     $debug = (isset($_REQUEST['debug']) && (bool)$_REQUEST['debug']) ? true : false;
-    if(strtolower($_SERVER['REQUEST_METHOD']) !== 'post')
+    $update = (isset($_REQUEST['update']) && (bool)$_REQUEST['update']) ? true : false;
+    if(strtolower($_SERVER['REQUEST_METHOD']) !== 'get')
     {
         throw new \Exception('Request method not allowed');
+    }
+    if(!isset($_REQUEST['file']) || (isset($_REQUEST['file']) && empty($_REQUEST['file'])))
+    {
+        throw new \Exception('Empty or non-existing file value');
     }
     if(!isset($_REQUEST['token']) || (isset($_REQUEST['token']) && empty($_REQUEST['token'])))
     {
@@ -47,16 +51,7 @@ try
     {
         throw new \Exception('Token miss match');
     }
-    if(empty($data))
-    {
-        throw new \Exception('Empty post data');
-    }
-    if(($data = json_decode($data)) !== null && json_last_error() === JSON_ERROR_NONE)
-    {
-        echo (int)(new \Setcooki\Wp\Minio\Sync\Webhook(['debug' => $debug]))->execute($data);
-    }else{
-        throw new \Exception(sprintf('Json decode error: %s', json_last_error_msg()));
-    }
+    echo (int)(new \Setcooki\Wp\Minio\Sync\Sync(['debug' => $debug]))->execute($_REQUEST['file'], $update);
 }
 catch(\Exception $e)
 {
