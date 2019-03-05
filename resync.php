@@ -6,20 +6,13 @@ if(strtolower(php_sapi_name()) !== 'cli')
 {
     die("script can only run in cli mode");
 }
-if(!defined('ABSPATH'))
-{
-    if(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT']))
-    {
-        define('ABSPATH', rtrim($_SERVER['DOCUMENT_ROOT'], ' /\\') . DIRECTORY_SEPARATOR);
-    }else if(isset($_SERVER['SCRIPT_FILENAME']) && !empty($_SERVER['SCRIPT_FILENAME'])){
-        define('ABSPATH', preg_replace('=wp-content.*=i', '', dirname($_SERVER['SCRIPT_FILENAME'])));
-    }else{
-        define('ABSPATH', dirname(__FILE__) . '/../../../');
-    }
+if(isset($_SERVER['PWD']) && stripos(basename($_SERVER['PWD']), 'plugins') === false){
+    define('ABSPATH', preg_replace('=wp-content.*=i', '', $_SERVER['PWD']));
+}else if(stripos(basename(dirname(__DIR__)), 'plugins') === false){
+    define('ABSPATH', preg_replace('=wp-content.*=i', '', $_SERVER['SCRIPT_FILENAME']));
+}else{
+    define('ABSPATH', dirname(__FILE__) . '/../../../../');
 }
-
-var_dump(ABSPATH);
-
 
 if(!defined('WPINC'))
 {
@@ -41,9 +34,29 @@ ini_set( 'error_log', ABSPATH . 'wp-content' . DIRECTORY_SEPARATOR . 'debug.log'
 
 require_once ABSPATH . 'wp-load.php';
 
-foreach(get_posts(['post_type' => 'attachment']) as $post)
+$args = [];
+if($argv)
 {
-    print_r($post);
-    die();
+    foreach((array)$argv as $arg)
+    {
+        $arg = trim($arg);
+        if(substr($arg, 0, 2) === '--')
+        {
+            if(stripos($arg, '=') !== false){
+                $arg = explode('=', $arg);
+                $args[substr($arg[0], 2)] = $arg[1];
+            }else{
+                $args[substr($arg, 2)] = null;
+            }
+        }
+    }
 }
 
+try
+{
+    (new \Setcooki\Wp\Minio\Sync\Resync($args))->execute();
+}
+catch(\Exception $e)
+{
+    echo sprintf('%s, %d', $e->getMessage(), $e->getCode()) . PHP_EOL;
+}
