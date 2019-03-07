@@ -115,10 +115,14 @@ class Resync extends Base
                         {
                             $key = $post->guid;
                         }
-                        if(preg_match('=((?:[0-9]{4}\/[0-9]{2}\/)?(?:[a-z0-9\-\_\.]{1,})(\.[a-z0-9]{2,4})?)$=i', $key, $m))
+                        if(preg_match('=((?:[0-9]{4}\/[0-9]{2}\/)?(?:[\w\-\_\.]{1,})(\.[a-z0-9]{2,4})?)$=i', $key, $m))
                         {
                             $key = trim($m[1]);
                         }
+                    }
+                    if(array_key_exists('prefix', $this->options) && !empty($this->options['prefix']))
+                    {
+                        $key = $this->options['prefix'] . $key;
                     }
                     $key = apply_filters('wp_minio_resync_key', $key, $post, $minio);
                     if($minio->has($key))

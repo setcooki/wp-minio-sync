@@ -142,7 +142,7 @@ class Base
         }else{
             if(!isset($data['file']) || (isset($data['file']) && empty($data['file'])))
             {
-                $data['file'] = $file;
+                $data['file'] = $key;
             }
             if(!isset($data['url']) || (isset($data['url']) && empty($data['url'])))
             {

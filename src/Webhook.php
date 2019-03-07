@@ -232,7 +232,12 @@ class Webhook extends Base
                     if(!($attach_id instanceof \WP_Error))
                     {
                         $data = $this->generateAttachmentData($attach_id, $key, $tmp);
-                        update_post_meta($attach_id, '_wp_attachment_metadata', $data);
+                        if($this->isImage($tmp))
+                        {
+                            update_post_meta($attach_id, '_wp_attachment_metadata', $data);
+                        }else{
+                            update_post_meta($attach_id, 'ilab_s3_info', $data);
+                        }
                         $this->unlink($tmp);
                         return true;
                     }else{
@@ -259,7 +264,7 @@ class Webhook extends Base
      */
     protected function getMimeType($key = null)
     {
-        if($key === null)
+        if($key !== null)
         {
             return mime_content_type($key);
         }
